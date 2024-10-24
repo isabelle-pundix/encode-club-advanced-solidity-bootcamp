@@ -28,20 +28,26 @@ contract GasContract is Ownable {
 
     constructor(address[] memory _admins, uint256 _totalSupply) {
         totalSupply = _totalSupply;
-        for (uint256 i = 0; i < _admins.length && i < MAX_ADMINS; i++) {
+        for (uint256 i = 0; i < _admins.length && i < MAX_ADMINS; ) {
             if (_admins[i] != address(0)) {
                 administrators[i] = _admins[i];
                 if (_admins[i] == owner()) {
                     balances[_admins[i]] = _totalSupply;
                 }
             }
+            unchecked {
+                i++;
+            }
         }
     }
 
     function checkForAdmin(address _user) public view returns (bool) {
-        for (uint256 i = 0; i < MAX_ADMINS; i++) {
+        for (uint256 i = 0; i < MAX_ADMINS; ) {
             if (administrators[i] == _user) {
                 return true;
+            }
+            unchecked {
+                i++;
             }
         }
         return false;
