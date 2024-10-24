@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
 /**
  * @dev Provides information about the current execution context, including the
@@ -32,9 +32,6 @@ abstract contract Ownable {
         address indexed newOwner
     );
 
-    error NotOwner();
-    error ZeroAddress();
-
     /**
      * @dev Initializes the contract setting the deployer as the initial owner.
      */
@@ -62,7 +59,10 @@ abstract contract Ownable {
      */
     function _checkOwner() internal view virtual {
         if (owner() != msg.sender) {
-            revert NotOwner();
+            assembly {
+                mstore(0x00, 0x4e6f744f) // NotOwner()
+                revert(0x1c, 0x04)
+            }
         }
     }
 
@@ -81,9 +81,12 @@ abstract contract Ownable {
      * @dev Transfers ownership of the contract to a new account (`newOwner`).
      * Can only be called by the current owner.
      */
-    function transferOwnership(address newOwner) public virtual onlyOwner {
+    function transferOwnership(address newOwner) external virtual onlyOwner {
         if (newOwner == address(0)) {
-            revert ZeroAddress();
+            assembly {
+                mstore(0x00, 0x5a65726f) // ZeroAddress()
+                revert(0x1c, 0x04)
+            }
         }
         _transferOwnership(newOwner);
     }
